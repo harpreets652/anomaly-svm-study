@@ -9,10 +9,10 @@ http://scikit-learn.org/stable/auto_examples/svm/plot_oneclass.html#sphx-glr-aut
 """
 
 
-# note: this is not the slack variable
+# note~ this is not the slack variable
 nu = 0.5
 
-# complexity of the decision boundary: high gamma leads to over fitting
+# note~ complexity of the decision boundary: high gamma leads to over fitting
 gamma = 0.4
 
 kernel = "rbf"
@@ -76,4 +76,5 @@ plt.xlabel(f"nu: {nu}, kernel: {kernel}, gamma: {gamma}")
 plt.show()
 
 # todo: understand the parameters to the one class svm
-# todo: print scores of each data point in the outlier and test set
+# note~ decision function returns the distance of point to separating plane
+# note~ to save trained model: http://scikit-learn.org/stable/modules/model_persistence.html
