@@ -1,0 +1,2 @@
+import anomaly_img_features.data_provider.data_provider_sift as sift_provider
+
