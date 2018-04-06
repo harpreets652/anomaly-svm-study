@@ -1,7 +1,8 @@
 import os
 import cv2
-from cv2 import xfeatures2d as nonfree
+from cv2 import xfeatures2d as non_free
 import math
+import numpy as np
 
 
 class DataProviderSURF(object):
@@ -23,25 +24,83 @@ class DataProviderSURF(object):
         """
 
         # note~ not much arg validation here...
+
         self._resize_image = kwargs.pop("resize_image", ())
         self._patch_size = kwargs.pop("patch_size", 16)
 
         termination_criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
         bow_model = cv2.BOWKMeansTrainer(kwargs.pop("num_clusters", 500), termination_criteria)
 
+        key_point_tensor = {}
         for image_file in os.listdir(training_images_dir):
+            if not image_file.endswith(".jpg"):
+                continue
+
             image_path = training_images_dir + "/" + image_file
+
             print(f"Image {image_path}")
+
             cv_image = DataProviderSURF.read_image(image_path, self._resize_image)
-            descriptors = DataProviderSURF.extract_features(cv_image, self._patch_size)
+            descriptors, key_points = DataProviderSURF.extract_features_descriptors(cv_image, self._patch_size)
+
+            key_point_tensor[image_file] = [cv_image, key_points]
             bow_model.add(descriptors[1])
 
-        # use sklearn k-means clustering class to find x number of clusters
-        clusters = bow_model.cluster()
+        self._clusters = bow_model.cluster()
 
-        # iterate over each image, and perform vector quantization
+        self._img_descriptor_mapper = cv2.BOWImgDescriptorExtractor(non_free.SURF_create(extended=True),
+                                                                    cv2.FlannBasedMatcher_create())
+        self._img_descriptor_mapper.setVocabulary(self._clusters)
 
-        # save the k means object and training set
+        training_x_list = []
+        for img, img_data in key_point_tensor.items():
+            image_descriptor = self._img_descriptor_mapper.compute(img_data[0], img_data[1])
+            training_x_list.append(image_descriptor)
+
+        self._X = np.array(training_x_list)
+
+        return
+
+    def get_image_descriptor(self, image_path):
+        """
+        Compute quantized image descriptor based on bag of features of the training data
+
+        :param image_path: (string) path to the image
+        :return: (ndarray) numpy array
+        """
+
+        cv_image = DataProviderSURF.read_image(image_path, self._resize_image)
+        key_points = DataProviderSURF.extract_features(cv_image, self._patch_size)
+
+        return self._img_descriptor_mapper.compute(cv_image, key_points)
+
+    def __getstate__(self):
+        """
+        construct state that should be saved
+
+        :return: picklable state
+        """
+
+        state = self.__dict__.copy()
+
+        del state["_img_descriptor_mapper"]
+        del state["_X"]
+
+        return state
+
+    def __setstate__(self, state):
+        """
+        Restores the state of the object; sets the image descriptor mapper. Note that the training set is not restored
+
+        :param state: saved state dictionary
+        """
+        self.__dict__.update(state)
+
+        self._img_descriptor_mapper = cv2.BOWImgDescriptorExtractor(non_free.SURF_create(extended=True),
+                                                                    cv2.FlannBasedMatcher_create())
+        self._img_descriptor_mapper.setVocabulary(self._clusters)
+
+        self._X = None
 
         return
 
@@ -66,7 +125,7 @@ class DataProviderSURF(object):
         return cv_image
 
     @staticmethod
-    def extract_features(image, patch_size=16):
+    def extract_features_descriptors(image, patch_size=16):
         """
         Computes features based on the patch size
 
@@ -75,16 +134,22 @@ class DataProviderSURF(object):
         :return: list of SURF descriptors
         """
 
-        # compute key points, center of the patch; rows and cols are reversed
+        key_points = DataProviderSURF.extract_features(image, patch_size)
+
+        surf = non_free.SURF_create(extended=True)
+        descriptors = surf.compute(image, key_points)
+
+        return descriptors, key_points
+
+    @staticmethod
+    def extract_features(image, patch_size=16):
         key_points = []
         blob_size = int(math.floor(patch_size / 2))
+
         start_loc = blob_size
         for x_loc in range(start_loc, image.shape[1], patch_size):
             for y_loc in range(start_loc, image.shape[0], patch_size):
                 key_points.append(cv2.KeyPoint(x_loc, y_loc, blob_size))
-
-        surf = nonfree.SURF_create(extended=True)
-        descriptors = surf.compute(image, key_points)
 
         # note~ DEBUG CODE
         # key_point_image = cv2.drawKeypoints(image, key_points, None)
@@ -92,4 +157,4 @@ class DataProviderSURF(object):
         # cv2.waitKey(0)
         # kp, desc = surf.detectAndCompute(image, None)
 
-        return descriptors
+        return key_points
