@@ -3,9 +3,10 @@ import cv2
 from cv2 import xfeatures2d as non_free
 import math
 import numpy as np
+import anomaly_img_features.data_provider.abstract_data_provider as abstract_provider
 
 
-class DataProviderSURF(object):
+class DataProviderSURF(abstract_provider.AbstractDataProvider):
     def __init__(self, training_images_dir, **kwargs):
         """
         This data provider utilizes the visual bag of words algorithm to map image_file
@@ -95,14 +96,15 @@ class DataProviderSURF(object):
         :param state: saved state dictionary
         """
         self.__dict__.update(state)
-
         self._img_descriptor_mapper = cv2.BOWImgDescriptorExtractor(non_free.SURF_create(extended=True),
                                                                     cv2.FlannBasedMatcher_create())
         self._img_descriptor_mapper.setVocabulary(self._clusters)
-
         self._X = None
 
         return
+
+    def get_training_data(self):
+        return self._X
 
     @staticmethod
     def read_image(image_file, resize_image=()):
