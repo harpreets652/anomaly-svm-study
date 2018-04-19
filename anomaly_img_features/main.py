@@ -27,6 +27,9 @@ def main():
     test_data_dir = "/Users/harpreetsingh/Downloads/airfield/neg_debug"
 
     for test_image in os.listdir(test_data_dir):
+        if not test_image.endswith(".jpg"):
+            continue
+
         test_image_path = test_data_dir + "/" + test_image
         image_descriptor = data_provider.get_image_descriptor(test_image_path)
 

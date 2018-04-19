@@ -58,7 +58,7 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
             image_descriptor = self._img_descriptor_mapper.compute(img_data[0], img_data[1])
             training_x_list.append(image_descriptor)
 
-        self._X = np.array(training_x_list)
+        self._X = np.vstack(training_x_list)
 
         return
 
