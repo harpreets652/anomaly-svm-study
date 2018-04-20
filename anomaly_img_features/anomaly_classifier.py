@@ -24,7 +24,6 @@ class AnomalyClassifier(object):
         gamma = kwargs.pop("gamma", 0.4)
 
         self._svm_classifier = svm.OneClassSVM(nu=nu, kernel=kernel, gamma=gamma)
-        # todo: training data needs to be a 2d array
         self._svm_classifier.fit(self._provider.get_training_data())
 
         return

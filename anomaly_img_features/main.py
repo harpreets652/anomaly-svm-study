@@ -17,15 +17,17 @@ def load_model(model_file):
 
 
 def main():
-    data_provider = sift_provider.DataProviderSURF("/Users/harpreetsingh/Downloads/airfield/neg_debug",
-                                                   num_clusters=3,
+    data_provider = sift_provider.DataProviderSURF("/Users/harpreetsingh/Downloads/airfield/pos",
+                                                   num_clusters=30,
                                                    resize_image=(400, 225),
                                                    patch_size=16)
 
     classifier = anomaly_classifier.AnomalyClassifier(data_provider)
 
-    test_data_dir = "/Users/harpreetsingh/Downloads/airfield/neg_debug"
+    test_data_dir = "/Users/harpreetsingh/Downloads/airfield/neg"
 
+    correct_prediction_counter = 0
+    total_num_images = 0
     for test_image in os.listdir(test_data_dir):
         if not test_image.endswith(".jpg"):
             continue
@@ -34,7 +36,14 @@ def main():
         image_descriptor = data_provider.get_image_descriptor(test_image_path)
 
         prediction = classifier.predict(image_descriptor)
+
+        if prediction[0] == -1:
+            correct_prediction_counter += 1
+        total_num_images += 1
+
         print(f"image: {test_image_path}, prediction: {prediction}")
+
+    print(f"Accuracy: {correct_prediction_counter/total_num_images}")
 
     return
 
