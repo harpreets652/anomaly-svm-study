@@ -1,6 +1,6 @@
 import os
 import pickle
-import anomaly_img_features.data_provider.data_provider_surf as sift_provider
+import anomaly_img_features.data_provider.data_provider_surf as surf_provider
 import anomaly_img_features.anomaly_classifier as anomaly_classifier
 
 
@@ -17,7 +17,7 @@ def load_model(model_file):
 
 
 def main():
-    data_provider = sift_provider.DataProviderSURF("/Users/harpreetsingh/Downloads/airfield/pos",
+    data_provider = surf_provider.DataProviderSURF("/Users/harpreetsingh/Downloads/airfield/pos",
                                                    num_clusters=30,
                                                    resize_image=(400, 225),
                                                    patch_size=16)
