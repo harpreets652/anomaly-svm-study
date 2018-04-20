@@ -28,13 +28,18 @@ class AnomalyClassifier(object):
 
         return
 
-    def predict(self, new_data):
+    def predict(self, image_path):
         """
         predict classification using trained one class svm
 
-        :param new_data: ndarray
+        :param image_path: path to the image
         :return: ndarray of predictions (-1 for outliers and +1 for inliers
         """
+
+        new_data = self._provider.get_image_descriptor(image_path)
+
+        if new_data.size < 1:
+            raise RuntimeError(f"Empty image data descriptor for {image_path}")
 
         return self._svm_classifier.predict(new_data)
 

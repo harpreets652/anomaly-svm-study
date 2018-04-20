@@ -33,9 +33,7 @@ def main():
             continue
 
         test_image_path = test_data_dir + "/" + test_image
-        image_descriptor = data_provider.get_image_descriptor(test_image_path)
-
-        prediction = classifier.predict(image_descriptor)
+        prediction = classifier.predict(test_image_path)
 
         if prediction[0] == -1:
             correct_prediction_counter += 1
