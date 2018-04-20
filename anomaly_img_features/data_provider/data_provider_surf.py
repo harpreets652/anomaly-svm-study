@@ -107,26 +107,6 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
         return self._X
 
     @staticmethod
-    def read_image(image_file, resize_image=()):
-        """
-        Read an image and resize it, if necessary
-
-        :param image_file: absolute image path
-        :param resize_image: (x, y) tuple for new image dimensions
-        :return: cv2 image
-        """
-
-        cv_image = cv2.imread(image_file)
-
-        if cv_image is None:
-            raise RuntimeError(f"Unable to open {image_file}")
-
-        if len(resize_image) > 0:
-            cv_image = cv2.resize(cv_image, resize_image)
-
-        return cv_image
-
-    @staticmethod
     def extract_features_descriptors(image, patch_size=16):
         """
         Computes features based on the patch size
