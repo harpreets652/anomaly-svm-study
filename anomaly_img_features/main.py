@@ -1,6 +1,6 @@
 import os
 import pickle
-import anomaly_img_features.data_provider.data_provider_sift as sift_provider
+import anomaly_img_features.data_provider.data_provider_surf as sift_provider
 import anomaly_img_features.anomaly_classifier as anomaly_classifier
 
 
