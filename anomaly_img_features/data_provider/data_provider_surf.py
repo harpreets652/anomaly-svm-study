@@ -75,6 +75,9 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
 
         return self._img_descriptor_mapper.compute(cv_image, key_points)
 
+    def get_training_data(self):
+        return self._X
+
     def __getstate__(self):
         """
         construct state that should be saved
@@ -102,9 +105,6 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
         self._X = None
 
         return
-
-    def get_training_data(self):
-        return self._X
 
     @staticmethod
     def extract_features_descriptors(image, patch_size=16):

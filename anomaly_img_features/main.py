@@ -1,6 +1,7 @@
 import os
 import pickle
 import anomaly_img_features.data_provider.data_provider_surf as surf_provider
+import anomaly_img_features.data_provider.data_provider_vgg16 as vgg_provider
 import anomaly_img_features.anomaly_classifier as anomaly_classifier
 
 
@@ -17,10 +18,8 @@ def load_model(model_file):
 
 
 def main():
-    data_provider = surf_provider.DataProviderSURF("/Users/harpreetsingh/Downloads/airfield/pos",
-                                                   num_clusters=30,
-                                                   resize_image=(400, 225),
-                                                   patch_size=16)
+    training_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos"
+    data_provider = vgg_provider.DataProviderVGG16(training_data_dir)
 
     classifier = anomaly_classifier.AnomalyClassifier(data_provider)
 
