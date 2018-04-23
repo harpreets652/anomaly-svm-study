@@ -46,9 +46,12 @@ def run_test_set(classifier, test_set_dir):
 
 def main():
     training_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_big"
-    data_provider = inception.DataProviderInception(training_data_dir)
+    data_provider = resnet_provider.DataProviderResNet50(training_data_dir)
 
-    classifier = anomaly_classifier.AnomalyClassifier(data_provider)
+    classifier = anomaly_classifier.AnomalyClassifier(data_provider, nu=0.1, gamma=0.8)
+
+    test_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_big"
+    run_test_set(classifier, test_data_dir)
 
     test_data_dir = "/Users/harpreetsingh/Downloads/airfield/neg"
     run_test_set(classifier, test_data_dir)
