@@ -33,6 +33,11 @@ class DataProviderVGG16(abstract_provider.AbstractDataProvider):
             training_x_list.append(features)
 
         self._X = np.vstack(training_x_list)
+
+        # L2 norm
+        z = np.linalg.norm(self._X, ord='fro')
+        self._X /= z
+
         return
 
     def get_image_descriptor(self, image_path):

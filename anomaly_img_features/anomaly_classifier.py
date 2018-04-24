@@ -1,4 +1,5 @@
 from sklearn import svm
+import numpy as np
 
 
 class AnomalyClassifier(object):
@@ -42,6 +43,9 @@ class AnomalyClassifier(object):
             raise RuntimeError(f"Empty image data descriptor for {image_path}")
 
         return self._svm_classifier.predict(new_data)
+
+    def get_support_vectors(self):
+        return np.copy(self._svm_classifier.support_vectors_)
 
     def __getstate__(self):
         """

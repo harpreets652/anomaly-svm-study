@@ -46,16 +46,25 @@ def run_test_set(classifier, test_set_dir):
 
 def main():
     training_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_big"
+    # data_provider = surf_provider.DataProviderSURF(training_data_dir,
+    #                                                num_clusters=200,
+    #                                                resize_image=(400, 225),
+    #                                                patch_size=16)
     data_provider = resnet_provider.DataProviderResNet50(training_data_dir)
 
-    classifier = anomaly_classifier.AnomalyClassifier(data_provider, nu=0.1, gamma=0.8)
+    classifier = anomaly_classifier.AnomalyClassifier(data_provider, nu=0.1, gamma=0.1)
 
-    test_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_big"
-    run_test_set(classifier, test_data_dir)
+    support_vectors = classifier.get_support_vectors()
+    print("number of support vectors: \n", support_vectors.shape)
 
+    # test training data
+    run_test_set(classifier, training_data_dir)
+
+    # test outlier data
     test_data_dir = "/Users/harpreetsingh/Downloads/airfield/neg"
     run_test_set(classifier, test_data_dir)
 
+    # test inlier data
     test_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_val"
     run_test_set(classifier, test_data_dir)
 

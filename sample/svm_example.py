@@ -10,10 +10,10 @@ http://scikit-learn.org/stable/auto_examples/svm/plot_oneclass.html#sphx-glr-aut
 
 
 # note~ this is not the slack variable
-nu = 0.2
+nu = 0.5
 
 # note~ complexity of the decision boundary: high gamma leads to over fitting
-gamma = 0.8
+gamma = 0.1
 
 kernel = "rbf"
 

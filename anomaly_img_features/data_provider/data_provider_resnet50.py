@@ -32,6 +32,11 @@ class DataProviderResNet50(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
+        # L2 norm
+        # todo: use x - mean / std. dev for each columm
+        z = np.linalg.norm(self._X, axis=0)
+        self._X /= z
+
         return
 
     def get_training_data(self):
