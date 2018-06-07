@@ -33,10 +33,6 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
-        # L2 norm
-        z = np.linalg.norm(self._X, ord='fro')
-        self._X /= z
-
         return
 
     def get_training_data(self):
@@ -53,6 +49,6 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
         cv_image = DataProviderInception.read_image(image_path, (299, 299))
         cv_image = np.expand_dims(cv_image, axis=0)
         cv_image = cv_image.astype("float32")
-        cv_image = applications.resnet50.preprocess_input(cv_image)
+        cv_image = applications.inception_v3.preprocess_input(cv_image)
 
         return self._model.predict(cv_image)

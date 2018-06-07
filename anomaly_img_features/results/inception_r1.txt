@@ -1,0 +1,24 @@
+Features: Inception V3
+Nu: 0.1
+kernel: RBF
+Gamma: 0.1
+
+number of support vectors:
+ (1217, 2048)
+
+prediction mapping: {-1(outlier): 0, 1(inlier): 1}
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_big
+Results:
+[ 320.  900.]
+ total number of image: 1220
+
+testing /Users/harpreetsingh/Downloads/airfield/neg
+Results:
+[ 163.    0.]
+ total number of image: 163
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_val
+Results:
+[  62.  205.]
+ total number of image: 267

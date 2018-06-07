@@ -1,11 +1,13 @@
 import os
 import pickle
 import numpy as np
+import matplotlib.pyplot as plt
 
 import anomaly_img_features.data_provider.data_provider_surf as surf_provider
 import anomaly_img_features.data_provider.data_provider_vgg16 as vgg_provider
 import anomaly_img_features.data_provider.data_provider_resnet50 as resnet_provider
 import anomaly_img_features.data_provider.data_provider_inceptv3 as inception
+import anomaly_img_features.data_provider.data_provider_pca_wrapper as pca_wrapper
 import anomaly_img_features.anomaly_classifier as anomaly_classifier
 
 
@@ -37,7 +39,7 @@ def run_test_set(classifier, test_set_dir):
         pred_count[pred_map[prediction[0]]] += 1
         total_num_images += 1
 
-        print(f"image: {test_image_path}, prediction: {prediction}")
+        # print(f"image: {test_image_path}, prediction: {prediction}")
 
     print(f"Results:\n{pred_count}\n total number of image: {total_num_images}")
 
@@ -52,7 +54,32 @@ def main():
     #                                                patch_size=16)
     data_provider = resnet_provider.DataProviderResNet50(training_data_dir)
 
-    classifier = anomaly_classifier.AnomalyClassifier(data_provider, nu=0.1, gamma=0.1)
+    # note~ debug code...
+    print("performing pca")
+    provider_pca_wrapper = pca_wrapper.DataProviderPCAWrapper(provider=data_provider,
+                                                              num_principle_components=2)
+
+    train_data_plt = provider_pca_wrapper.get_training_data()
+    plt.scatter(train_data_plt[:, 0], train_data_plt[:, 1], c='blueviolet', s=40, edgecolors='k')
+
+    neg_list = []
+    test_data_dir = "/Users/harpreetsingh/Downloads/airfield/neg"
+    for test_image in os.listdir(test_data_dir):
+        if not test_image.endswith(".jpg"):
+            continue
+
+        test_image_path = test_data_dir + "/" + test_image
+        x_i = provider_pca_wrapper.get_image_descriptor(test_image_path)
+        neg_list.append(x_i)
+
+    test_x = np.vstack(neg_list)
+    plt.scatter(test_x[:, 0], test_x[:, 1], c='gold', s=40, edgecolors='k')
+    plt.show()
+
+    print("pca done")
+    # Note~ t===============================
+
+    classifier = anomaly_classifier.AnomalyClassifier(provider_pca_wrapper, nu=0.1, gamma=0.1)
 
     support_vectors = classifier.get_support_vectors()
     print("number of support vectors: \n", support_vectors.shape)

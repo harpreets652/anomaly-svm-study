@@ -32,10 +32,16 @@ class DataProviderResNet50(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
-        # L2 norm
-        # todo: use x - mean / std. dev for each columm
-        z = np.linalg.norm(self._X, axis=0)
-        self._X /= z
+        # normalize
+        # self._mean = np.mean(self._X, axis=0)
+        # self._std_dev = np.std(self._X, axis=0)
+        #
+        # self._X = np.divide(self._X - self._mean, self._std_dev)
+        #
+        # for i in range(self._X.shape[0]):
+        #     for j in range(self._X.shape[1]):
+        #         if np.isnan(self._X[i][j]) or np.isinf(self._X[i][j]):
+        #             self._X[i][j] = 0.0
 
         return
 
@@ -55,4 +61,11 @@ class DataProviderResNet50(abstract_provider.AbstractDataProvider):
         cv_image = cv_image.astype("float32")
         cv_image = applications.resnet50.preprocess_input(cv_image)
 
-        return self._model.predict(cv_image)
+        x = self._model.predict(cv_image)
+        # x = np.divide(x - self._mean, self._std_dev)
+        #
+        # for i in range(x.shape[0]):
+        #     for j in range(x.shape[1]):
+        #         if np.isnan(x[i][j]) or np.isinf(x[i][j]):
+        #             x[i][j] = 0.0
+        return x

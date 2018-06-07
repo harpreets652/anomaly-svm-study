@@ -10,9 +10,11 @@ http://scikit-learn.org/stable/auto_examples/svm/plot_oneclass.html#sphx-glr-aut
 
 
 # note~ this is not the slack variable
-nu = 0.5
+# upper bound on the fraction of training errors and lower bound on fraction of support vectors
+nu = 0.1
 
 # note~ complexity of the decision boundary: high gamma leads to over fitting
+# for rbf kernel
 gamma = 0.1
 
 kernel = "rbf"
@@ -45,6 +47,8 @@ outlier_error = outlier_predictions[outlier_predictions == 1].size
 print(f"Training error: {training_error}/{X_train.shape[0]}, "
       f"" f"regular test error: {test_error}/{X_test.shape[0]}, "
       f"outliers error: {outlier_error}/{X_outliers.shape[0]}")
+
+print(f"number of support vectors: {classifier.support_vectors_.shape}")
 
 # visualize results
 xx, yy = np.meshgrid(np.linspace(-8, 8, 200), np.linspace(-8, 8, 200))
