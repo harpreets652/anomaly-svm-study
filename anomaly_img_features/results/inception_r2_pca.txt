@@ -1,0 +1,62 @@
+100 features:========================================
+Using <class 'anomaly_img_features.data_provider.data_provider_inceptv3.DataProviderInception'>
+number of support vectors:
+ (1178, 100)
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_big
+Results:
+[ 702.  518.]
+ total number of image: 1220
+
+testing /Users/harpreetsingh/Downloads/airfield/neg
+Results:
+[ 163.    0.]
+ total number of image: 163
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_val
+Results:
+[ 163.  104.]
+ total number of image: 267
+
+
+50 features:========================================
+Using <class 'anomaly_img_features.data_provider.data_provider_inceptv3.DataProviderInception'>
+number of support vectors:
+ (1097, 50)
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_big
+Results:
+[ 571.  649.]
+ total number of image: 1220
+
+testing /Users/harpreetsingh/Downloads/airfield/neg
+Results:
+[ 163.    0.]
+ total number of image: 163
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_val
+Results:
+[ 106.  161.]
+ total number of image: 267
+
+
+25 features====================================================
+Using <class 'anomaly_img_features.data_provider.data_provider_inceptv3.DataProviderInception'>
+
+number of support vectors:
+ (936, 25)
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_big
+Results:
+[ 540.  680.]
+ total number of image: 1220
+
+testing /Users/harpreetsingh/Downloads/airfield/neg
+Results:
+[ 163.    0.]
+ total number of image: 163
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_val
+Results:
+[ 114.  153.]
+ total number of image: 267
