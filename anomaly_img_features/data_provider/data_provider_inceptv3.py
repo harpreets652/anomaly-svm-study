@@ -33,6 +33,9 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
+        self._mean, self._std_dev = DataProviderInception.compute_normalization_params(self._X)
+        self._X = DataProviderInception.normalize(self._X, self._mean, self._std_dev)
+
         return
 
     def get_training_data(self):
@@ -51,4 +54,6 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
         cv_image = cv_image.astype("float32")
         cv_image = applications.inception_v3.preprocess_input(cv_image)
 
-        return self._model.predict(cv_image)
+        x = self._model.predict(cv_image)
+
+        return DataProviderInception.normalize(x, self._mean, self._std_dev)
