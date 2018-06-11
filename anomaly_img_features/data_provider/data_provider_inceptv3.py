@@ -33,8 +33,8 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
-        self._mean, self._std_dev = DataProviderInception.compute_normalization_params(self._X)
-        self._X = DataProviderInception.normalize(self._X, self._mean, self._std_dev)
+        # self._mean, self._std_dev = DataProviderInception.compute_normalization_params(self._X)
+        # self._X = DataProviderInception.normalize(self._X, self._mean, self._std_dev)
 
         return
 
@@ -56,4 +56,4 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
 
         x = self._model.predict(cv_image)
 
-        return DataProviderInception.normalize(x, self._mean, self._std_dev)
+        return x
