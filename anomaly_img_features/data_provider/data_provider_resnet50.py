@@ -17,18 +17,19 @@ class DataProviderResNet50(abstract_provider.AbstractDataProvider):
         self._model = applications.resnet50.ResNet50(include_top=False, pooling="avg", input_shape=(224, 224, 3))
 
         training_x_list = []
-        for image_file in os.listdir(training_images_dir):
-            if not image_file.endswith(".jpg"):
-                continue
+        for root, sub_dirs, files in os.walk(training_images_dir):
+            for image_file in files:
+                if not image_file.endswith(".jpg"):
+                    continue
 
-            image_file_path = training_images_dir + "/" + image_file
-            cv_image = DataProviderResNet50.read_image(image_file_path, (224, 224))
-            cv_image = np.expand_dims(cv_image, axis=0)
-            cv_image = cv_image.astype("float32")
-            cv_image = applications.resnet50.preprocess_input(cv_image)
+                image_file_path = os.path.join(root, image_file)
+                cv_image = DataProviderResNet50.read_image(image_file_path, (224, 224))
+                cv_image = np.expand_dims(cv_image, axis=0)
+                cv_image = cv_image.astype("float32")
+                cv_image = applications.resnet50.preprocess_input(cv_image)
 
-            features = self._model.predict(cv_image)
-            training_x_list.append(features)
+                features = self._model.predict(cv_image)
+                training_x_list.append(features)
 
         self._X = np.vstack(training_x_list)
 

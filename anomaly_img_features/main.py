@@ -30,17 +30,19 @@ def run_test_set(classifier, test_set_dir):
     pred_count = np.zeros(2)
 
     print(f"testing {test_set_dir}")
-    for test_image in os.listdir(test_set_dir):
-        if not test_image.endswith(".jpg"):
-            continue
 
-        test_image_path = test_set_dir + "/" + test_image
-        prediction = classifier.predict(test_image_path)
+    for root, sub_dirs, files in os.walk(test_set_dir):
+        for test_image in files:
+            if not test_image.endswith(".jpg"):
+                continue
 
-        pred_count[pred_map[prediction[0]]] += 1
-        total_num_images += 1
+            test_image_path = os.path.join(root, test_image)
+            prediction = classifier.predict(test_image_path)
 
-        # print(f"image: {test_image_path}, prediction: {prediction}")
+            pred_count[pred_map[prediction[0]]] += 1
+            total_num_images += 1
+
+            # print(f"image: {test_image_path}, prediction: {prediction}")
 
     print(f"Results:\n{pred_count}\n total number of image: {total_num_images}")
 
@@ -48,7 +50,7 @@ def run_test_set(classifier, test_set_dir):
 
 
 def main():
-    training_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
+    training_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_big"
     # data_provider = surf_provider.DataProviderSURF(training_data_dir,
     #                                                num_clusters=200,
     #                                                resize_image=(400, 225),

@@ -33,19 +33,21 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
         bow_model = cv2.BOWKMeansTrainer(kwargs.pop("num_clusters", 500), termination_criteria)
 
         key_point_tensor = {}
-        for image_file in os.listdir(training_images_dir):
-            if not image_file.endswith(".jpg"):
-                continue
 
-            image_path = training_images_dir + "/" + image_file
+        for root, sub_dirs, files in os.walk(training_images_dir):
+            for image_file in files:
+                if not image_file.endswith(".jpg"):
+                    continue
 
-            print(f"Image {image_path}")
+                image_path = os.path.join(root, image_file)
 
-            cv_image = DataProviderSURF.read_image(image_path, self._resize_image)
-            descriptors, key_points = DataProviderSURF.extract_features_descriptors(cv_image, self._patch_size)
+                print(f"Image {image_path}")
 
-            key_point_tensor[image_file] = [cv_image, key_points]
-            bow_model.add(descriptors[1])
+                cv_image = DataProviderSURF.read_image(image_path, self._resize_image)
+                descriptors, key_points = DataProviderSURF.extract_features_descriptors(cv_image, self._patch_size)
+
+                key_point_tensor[image_file] = [cv_image, key_points]
+                bow_model.add(descriptors[1])
 
         self._clusters = bow_model.cluster()
 
