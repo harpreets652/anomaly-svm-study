@@ -38,6 +38,8 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
                 features = self._model.predict(cv_image)
                 training_x_list.append(features)
 
+        print(f"{training_counter} total number of images in training.")
+
         self._X = np.vstack(training_x_list)
 
         # self._mean, self._std_dev = DataProviderInception.compute_normalization_params(self._X)

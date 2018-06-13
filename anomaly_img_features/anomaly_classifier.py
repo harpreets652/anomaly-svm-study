@@ -24,7 +24,7 @@ class AnomalyClassifier(object):
         kernel = kwargs.pop("kernel", "rbf")
         gamma = kwargs.pop("gamma", 0.4)
 
-        self._svm_classifier = svm.OneClassSVM(nu=nu, kernel=kernel, gamma=gamma)
+        self._svm_classifier = svm.OneClassSVM(nu=nu, kernel=kernel, gamma=gamma, verbose=1)
         self._svm_classifier.fit(self._provider.get_training_data())
 
         return
