@@ -1,0 +1,39 @@
+Features: Inception V3 with normalization
+Nu: 0.1
+Kernel: RBF
+Gamma: 0.1
+Data: desert new site: > 21k training images
+
+
+Features: Inception V3
+Nu: 0.1
+Kernel: RBF
+Gamma: 0.1
+Data: desert new site: > 21k training images
+
+
+Using <class 'anomaly_img_features.data_provider.data_provider_inceptv3.DataProviderInception'>
+....................*...................*
+optimization finished, #iter = 39082
+obj = 130.026638, rho = 0.122245
+nSV = 17409, nBSV = 0
+[LibSVM]
+number of support vectors: 
+ (17409, 2048)
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite/0/pos
+Results:
+[4930.   70.]
+ total number of image: 5000
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/neg/0/neg
+Results:
+[3145.    0.]
+ total number of image: 3145
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/pos/0/pos
+Results:
+[4839.  161.]
+ total number of image: 5000
+
+
