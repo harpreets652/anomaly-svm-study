@@ -1,0 +1,25 @@
+Features: Inception V3
+Nu: 0.1
+Kernel: RBF
+Gamma: 0.1
+Data: desert new site: > 21k training images
+
+
+number of support vectors: 
+ (16365, 2048)
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite/0/pos
+Results:
+[2306. 2694.]
+ total number of image: 5000
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/neg/0/neg
+Results:
+[3145.    0.]
+ total number of image: 3145
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/pos/0/pos
+Results:
+[3652. 1348.]
+ total number of image: 5000
+
