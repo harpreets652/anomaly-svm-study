@@ -39,11 +39,9 @@ class DataProviderVGG16(abstract_provider.AbstractDataProvider):
                 features = self._model.predict(cv_image)
                 training_x_list.append(features)
 
-        self._X = np.vstack(training_x_list)
+        print(f"{training_counter} total number of images in training.")
 
-        # L2 norm
-        z = np.linalg.norm(self._X, ord='fro')
-        self._X /= z
+        self._X = np.vstack(training_x_list)
 
         return
 

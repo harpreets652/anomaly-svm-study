@@ -35,6 +35,8 @@ class DataProviderAlexNet(abstract_provider.AbstractDataProvider):
                 features = self._model.predict(cv_image)
                 training_x_list.append(features)
 
+        print(f"{training_counter} total number of images in training.")
+
         self._X = np.vstack(training_x_list)
 
         return
