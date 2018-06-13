@@ -17,10 +17,16 @@ class DataProviderResNet50(abstract_provider.AbstractDataProvider):
         self._model = applications.resnet50.ResNet50(include_top=False, pooling="avg", input_shape=(224, 224, 3))
 
         training_x_list = []
+        training_counter = 0
+
         for root, sub_dirs, files in os.walk(training_images_dir):
             for image_file in files:
                 if not image_file.endswith(".jpg"):
                     continue
+
+                training_counter += 1
+                if training_counter % 1000 == 0:
+                    print(f"{training_counter} images completed")
 
                 image_file_path = os.path.join(root, image_file)
                 cv_image = DataProviderResNet50.read_image(image_file_path, (224, 224))

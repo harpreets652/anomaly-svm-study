@@ -16,13 +16,19 @@ class DataProviderVGG16(abstract_provider.AbstractDataProvider):
         """
 
         base_model = applications.VGG16()
-        self._model = keras.models.Model(inputs=base_model.input, outputs=base_model.get_layer("fc2").output)
+        self._model = keras.models.Model(inputs=base_model.input, outputs=base_model.get_layer("fc1").output)
 
         training_x_list = []
+        training_counter = 0
+
         for root, sub_dirs, files in os.walk(training_images_dir):
             for image_file in files:
                 if not image_file.endswith(".jpg"):
                     continue
+
+                training_counter += 1
+                if training_counter % 1000 == 0:
+                    print(f"{training_counter} images completed")
 
                 image_file_path = os.path.join(root, image_file)
                 cv_image = DataProviderVGG16.read_image(image_file_path, (224, 224))
