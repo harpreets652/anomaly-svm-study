@@ -14,7 +14,9 @@ class DataProviderResNet50(abstract_provider.AbstractDataProvider):
         :param training_images_dir: (string) directory containing training data
         """
 
-        self._model = applications.resnet50.ResNet50(include_top=False, pooling="avg", input_shape=(224, 224, 3))
+        self._model = applications.resnet50.ResNet50(include_top=False,
+                                                     pooling="avg",
+                                                     input_shape=(224, 224, 3))
 
         training_x_list = []
         training_counter = 0
