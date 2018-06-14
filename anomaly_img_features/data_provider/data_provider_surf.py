@@ -46,13 +46,13 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
 
                 image_path = os.path.join(root, image_file)
 
-                print(f"Image {image_path}")
-
                 cv_image = DataProviderSURF.read_image(image_path, self._resize_image)
                 descriptors, key_points = DataProviderSURF.extract_features_descriptors(cv_image, self._patch_size)
 
                 key_point_tensor[image_file] = [cv_image, key_points]
                 bow_model.add(descriptors[1])
+
+        print(f"{training_counter} total number of images in training.")
 
         self._clusters = bow_model.cluster()
 
