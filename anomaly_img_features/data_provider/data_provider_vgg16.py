@@ -15,8 +15,7 @@ class DataProviderVGG16(abstract_provider.AbstractDataProvider):
         :param training_images_dir: (string) directory containing training data
         """
 
-        base_model = applications.VGG16()
-        self._model = keras.models.Model(inputs=base_model.input, outputs=base_model.get_layer("fc1").output)
+        self._model = applications.VGG16(include_top=False)
 
         training_x_list = []
         training_counter = 0

@@ -33,11 +33,16 @@ class DataProviderSURF(abstract_provider.AbstractDataProvider):
         bow_model = cv2.BOWKMeansTrainer(kwargs.pop("num_clusters", 500), termination_criteria)
 
         key_point_tensor = {}
+        training_counter = 0
 
         for root, sub_dirs, files in os.walk(training_images_dir):
             for image_file in files:
                 if not image_file.endswith(".jpg"):
                     continue
+
+                training_counter += 1
+                if training_counter % 1000 == 0:
+                    print(f"{training_counter} images completed")
 
                 image_path = os.path.join(root, image_file)
 
