@@ -2,7 +2,7 @@ Features: Inception V3 with normalization
 Nu: 0.1
 Kernel: RBF
 Gamma: 0.1
-Data: desert new site: > 21k training images
+Data: new desert site: 21273 training images
 
 
 Features: Inception V3

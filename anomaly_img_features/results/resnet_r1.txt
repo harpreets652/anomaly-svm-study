@@ -2,7 +2,7 @@ Features: Resnet50
 Nu: 0.1
 kernel: RBF
 Gamma: 0.1
-
+Data: first desert site: 1220 training set
 
 number of support vectors:
  (1220, 2048)

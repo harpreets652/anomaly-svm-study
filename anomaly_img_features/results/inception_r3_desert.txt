@@ -2,7 +2,7 @@ Features: Inception V3
 Nu: 0.1
 Kernel: RBF
 Gamma: 0.1
-Data: desert new site: 21273 training images
+Data: new desert site: 21273 training images
 
 
 number of support vectors: 
