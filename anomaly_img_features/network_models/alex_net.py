@@ -13,6 +13,7 @@
 
 import numpy as np
 import cv2
+import os
 
 import tensorflow as tf
 
@@ -32,6 +33,8 @@ class AlexNet:
         with self.g.as_default():
             self._x = tf.placeholder(tf.float32, (None,) + AlexNet.x_dim)
             self._init_network(net_data)
+
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
         return
 
