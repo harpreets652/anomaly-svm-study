@@ -51,6 +51,8 @@ def run_test_set(classifier, test_set_dir):
 
 def main():
     training_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_big"
+
+    print(f"Training data: {training_data_dir}")
     # data_provider = surf_provider.DataProviderSURF(training_data_dir,
     #                                                num_clusters=200,
     #                                                resize_image=(400, 225),
