@@ -1,0 +1,29 @@
+Features: AlexNet
+Nu: 0.1
+Kernel: RBF
+Gamma: 0.1
+Data: new desert site: 21273 training images
+
+
+optimization finished, #iter = 39082
+obj = 130.026638, rho = 0.122245
+nSV = 17403, nBSV = 0
+[LibSVM]
+
+number of support vectors:
+ (17403, 4096)
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite/0/pos
+Results:
+[4951.   49.]
+ total number of image: 5000
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/neg/0/neg
+Results:
+[3145.    0.]
+ total number of image: 3145
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/pos/0/pos
+Results:
+[4831.  169.]
+ total number of image: 5000
