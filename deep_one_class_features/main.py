@@ -12,11 +12,11 @@ import deep_one_class_features.custom_loss as my_loss
 def main():
     # construct reference model...note~ use test_on_batch...categorical_crossentropy?
     ref_model = applications.VGG16()
-    ref_model.compile(optimizer='sgd', loss='mean_squared_error', loss_weights=0.0)
+    ref_model.compile(optimizer='sgd', loss='mean_squared_error')
 
     # construct secondary model, todo: choice for optimizer
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
-    secondary_model.compile(optimizer='RMSprop', loss=my_loss.compute_total_loss)
+    secondary_model.compile(optimizer='sgd', loss=my_loss.compute_total_loss)
 
     # manually train on batches
 
@@ -24,8 +24,7 @@ def main():
     y = keras.utils.to_categorical(y)
 
     for i in range(0, 3):
-        my_loss.discriminative_loss *= 10
-        loss = ref_model.train_on_batch(x, y)
+        loss = secondary_model.train_on_batch(x, y)
         print(f"loss: {loss}")
 
     return

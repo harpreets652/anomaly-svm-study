@@ -6,20 +6,14 @@ lambda_coefficient = 0.1
 
 
 def compute_total_loss(y_true, y_pred):
-    if type(y_pred.shape[0]) is not type(int):
-        return tf.constant(0.0)
-
     mean = k.mean(y_pred, axis=0)
-    compactness_loss = 0.0
+    diff_step = y_pred - mean
+    sample_variance = k.sum(k.square(diff_step), axis=1)
+    var_sum = k.sum(sample_variance)
 
-    for i in range(y_pred.shape[0]):
-        x_i = y_pred[i]
-        mean_minus_i = (y_pred.shape[0] * mean - x_i) / (y_pred.shape[0] - 1)
-        z_i = x_i - mean_minus_i
-        compactness_loss += k.dot(z_i.T, z_i)
-
-    compactness_loss *= 1 / (y_pred.shape[0] * y_pred.shape[1])
+    compactness_loss = tf.cast((tf.shape(y_pred)[0] / (tf.shape(y_pred)[1] * k.pow(tf.shape(y_pred)[0] - 1, 2))),
+                               tf.float32) * var_sum
 
     total_loss = discriminative_loss + (lambda_coefficient * compactness_loss)
 
-    return tf.constant(total_loss)
+    return total_loss
