@@ -5,7 +5,7 @@ discriminative_loss = 1.0
 lambda_coefficient = 0.1
 
 
-def compute_total_loss(y_true, y_pred):
+def doc_total_loss(y_true, y_pred):
     mean = k.mean(y_pred, axis=0)
     diff_step = y_pred - mean
     sample_variance = k.sum(k.square(diff_step), axis=1)

@@ -1,50 +1,88 @@
-import keras
 from keras.models import Model
-from keras import layers
 from keras import applications
 import os
 import cv2
 import numpy as np
+import random
+import matplotlib.pyplot as plt
 
 import deep_one_class_features.custom_loss as my_loss
 
 
 def main():
-    # construct reference model...note~ use test_on_batch...categorical_crossentropy?
+    # construct reference model...note~ categorical_crossentropy?
     ref_model = applications.VGG16()
     ref_model.compile(optimizer='sgd', loss='mean_squared_error')
 
-    # construct secondary model, todo: choice for optimizer
+    # construct secondary model with shared layers
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
-    secondary_model.compile(optimizer='sgd', loss=my_loss.compute_total_loss)
+    secondary_model.compile(optimizer='Nadam', loss=my_loss.doc_total_loss)
 
     # manually train on batches
+    ref_train_data_dir = "bla/bla/bla"
+    target_train_data_dir = "bla/bla/bla"
+    tot_loss, ref_loss = train(ref_model, secondary_model, 32, 2, ref_train_data_dir, target_train_data_dir)
 
-    x, y = read_images("/Users/harpreetsingh/Downloads/airfield/pos_small")
-    y = keras.utils.to_categorical(y)
+    # save secondary model after training
+    my_file_name = "path/to/results/trained_model.h5"
+    secondary_model.save(my_file_name)
 
-    for i in range(0, 3):
-        loss = secondary_model.train_on_batch(x, y)
-        print(f"loss: {loss}")
+    visualize_data(tot_loss, "total loss history")
+    visualize_data(ref_loss, "ref loss history")
 
     return
 
 
-def read_images(training_images_dir):
+def visualize_data(data, title):
+    plt.scatter(data[:, 0], data[:, 1], c='blueviolet', s=40, edgecolors='k')
+    plt.title(title)
+    plt.show()
+    return
+
+
+def train(ref_model, secondary_model, batch_size, num_epochs, ref_train_data_dir, target_train_data_dir):
+    ref_images_list = get_images_list(ref_train_data_dir)
+    target_images_list = get_images_list(target_train_data_dir)
+
+    num_iterations = max(len(target_images_list) / batch_size, 1) * num_epochs
+
+    total_loss_history = []
+    ref_loss_history = []
+    for i in range(num_iterations):
+        # todo: fix loading labels for ref data set
+        ref_batch_x, ref_batch_y = read_image_batch(ref_images_list, batch_size, False)
+        target_batch_x, target_batch_y = read_image_batch(ref_images_list, batch_size)
+
+        my_loss.discriminative_loss = ref_model.test_on_batch(ref_batch_x, ref_batch_y)
+        ref_loss_history.append((i, my_loss.discriminative_loss))
+
+        loss = secondary_model.train_on_batch(target_batch_x, target_batch_y)
+        total_loss_history.append((i, loss))
+
+    return np.array(total_loss_history), np.array(ref_loss_history)
+
+
+def read_image_batch(image_list, batch_size, placeholder_classification=True):
+    batch_images = []
+    classification = []
+    for k in range(batch_size):
+        rand_loc = random.randrange(0, len(image_list))
+        cv_image = read_image(image_list[rand_loc], (224, 224))
+
+        batch_images.append(cv_image)
+
+        if placeholder_classification:
+            classification.append(4095)
+
+    return np.array(batch_images), np.array(classification)
+
+
+def get_images_list(list_dir):
     images_list = []
-    classifications = []
-    for root, sub_dirs, files in os.walk(training_images_dir):
-        for image_file in files:
-            if not image_file.endswith(".jpg"):
-                continue
+    for root, sub_dirs, files in os.walk(list_dir):
+        images_list += [os.path.join(root, file) for file in files if file.endswith(".jpg")]
 
-            image_file_path = os.path.join(root, image_file)
-            cv_image = read_image(image_file_path, (224, 224))
-
-            images_list.append(cv_image)
-            classifications.append(999)
-
-    return np.array(images_list), np.array(classifications)
+    return images_list
 
 
 def read_image(image_file, resize_image=()):
@@ -65,6 +103,7 @@ def read_image(image_file, resize_image=()):
         cv_image = cv2.resize(cv_image, resize_image)
 
     return cv_image
+
 
 if __name__ == '__main__':
     main()
