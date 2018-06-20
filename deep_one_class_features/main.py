@@ -1,5 +1,6 @@
 from keras.models import Model
 from keras import applications
+from keras import utils
 import os
 import cv2
 import numpy as np
@@ -10,18 +11,18 @@ import deep_one_class_features.custom_loss as my_loss
 
 
 def main():
-    # construct reference model...note~ categorical_crossentropy?
+    # construct reference model
     ref_model = applications.VGG16()
-    ref_model.compile(optimizer='sgd', loss='mean_squared_error')
+    ref_model.compile(optimizer='sgd', loss='categorical_crossentropy')
 
     # construct secondary model with shared layers
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
     secondary_model.compile(optimizer='Nadam', loss=my_loss.doc_total_loss)
 
     # manually train on batches
-    ref_train_data_dir = "bla/bla/bla"
-    target_train_data_dir = "bla/bla/bla"
-    tot_loss, ref_loss = train(ref_model, secondary_model, 32, 2, ref_train_data_dir, target_train_data_dir)
+    ref_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
+    target_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
+    tot_loss, ref_loss = train(ref_model, secondary_model, 5, 2, ref_train_data_dir, target_train_data_dir)
 
     # save secondary model after training
     my_file_name = "path/to/results/trained_model.h5"
@@ -48,9 +49,9 @@ def train(ref_model, secondary_model, batch_size, num_epochs, ref_train_data_dir
 
     total_loss_history = []
     ref_loss_history = []
-    for i in range(num_iterations):
+    for i in range(int(num_iterations)):
         # todo: fix loading labels for ref data set
-        ref_batch_x, ref_batch_y = read_image_batch(ref_images_list, batch_size, False)
+        ref_batch_x, ref_batch_y = read_image_batch(ref_images_list, batch_size, class_label=999)
         target_batch_x, target_batch_y = read_image_batch(ref_images_list, batch_size)
 
         my_loss.discriminative_loss = ref_model.test_on_batch(ref_batch_x, ref_batch_y)
@@ -62,7 +63,7 @@ def train(ref_model, secondary_model, batch_size, num_epochs, ref_train_data_dir
     return np.array(total_loss_history), np.array(ref_loss_history)
 
 
-def read_image_batch(image_list, batch_size, placeholder_classification=True):
+def read_image_batch(image_list, batch_size, placeholder_classification=True, class_label=4095):
     batch_images = []
     classification = []
     for k in range(batch_size):
@@ -72,9 +73,9 @@ def read_image_batch(image_list, batch_size, placeholder_classification=True):
         batch_images.append(cv_image)
 
         if placeholder_classification:
-            classification.append(4095)
+            classification.append(class_label)
 
-    return np.array(batch_images), np.array(classification)
+    return np.array(batch_images), utils.to_categorical(np.array(classification))
 
 
 def get_images_list(list_dir):
