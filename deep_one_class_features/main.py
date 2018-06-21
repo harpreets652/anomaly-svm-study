@@ -100,7 +100,8 @@ def read_ref_data_labels(data_file):
     labels = []
     with open(data_file, 'r') as label_file:
         lines = label_file.readlines()
-        labels = [int(line) for line in lines]
+        # subtracting one to correctly index categorical array
+        labels = [int(line) - 1 for line in lines]
 
     return labels
 
