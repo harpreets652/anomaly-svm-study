@@ -4,6 +4,7 @@ import keras
 import numpy as np
 
 import anomaly_img_features.data_provider.abstract_data_provider as abstract_provider
+import deep_one_class_features.custom_loss as custom_loss
 
 
 class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
@@ -14,7 +15,8 @@ class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
         :param training_images_dir: (string) directory containing training data
         """
 
-        self._model = keras.models.load_model(model_file_path)
+        self._model = keras.models.load_model(model_file_path,
+                                              custom_objects={'doc_total_loss': custom_loss.doc_total_loss})
 
         training_x_list = []
         training_counter = 0
