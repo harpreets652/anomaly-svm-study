@@ -12,7 +12,7 @@ import deep_one_class_features.custom_loss as my_loss
 
 def main():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
-    os.environ["CUDA_VISIBLE_DEVICES"]="-1" 
+    # os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 
     # construct reference model
     ref_model = applications.VGG16()
@@ -29,7 +29,7 @@ def main():
     ref_train_label_file = "/home/im-zbox2/harpreet/github/anomaly_data/ILSVRC2012_validation_ground_truth.txt"
     target_train_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite"
 
-    tot_loss, ref_loss = train(ref_model, secondary_model, 32, 2,
+    tot_loss, ref_loss = train(ref_model, secondary_model, 64, 2,
                                ref_train_data_dir, ref_train_label_file, target_train_data_dir)
     print("Training completed")
 
