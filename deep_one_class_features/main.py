@@ -20,7 +20,7 @@ def main():
 
     # construct secondary model with shared layers
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
-    secondary_model.compile(optimizer='adam', loss=my_loss.doc_total_loss)
+    secondary_model.compile(optimizer='sgd', loss=my_loss.doc_total_loss)
     print("Secondary model built")
 
     # manually train on batches
