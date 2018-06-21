@@ -20,7 +20,7 @@ def main():
 
     # construct secondary model with shared layers
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
-    secondary_model.compile(optimizer='Nadam', loss=my_loss.doc_total_loss)
+    secondary_model.compile(optimizer='adam', loss=my_loss.doc_total_loss)
     print("Secondary model built")
 
     # manually train on batches
@@ -28,7 +28,7 @@ def main():
     ref_train_label_file = "/home/im-zbox2/harpreet/github/anomaly_data/ILSVRC2012_validation_ground_truth.txt"
     target_train_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite"
 
-    tot_loss, ref_loss = train(ref_model, secondary_model, 32, 4,
+    tot_loss, ref_loss = train(ref_model, secondary_model, 32, 2,
                                ref_train_data_dir, ref_train_label_file, target_train_data_dir)
     print("Training completed")
 
@@ -94,7 +94,10 @@ def read_image_batch(image_list, batch_size, class_labels=None):
             # print(f"image: {image_list[rand_loc]}, label: {class_labels[rand_loc]}")
             classification.append(class_labels[rand_loc])
 
-    return np.array(batch_images), utils.to_categorical(np.array(classification), num_classes)
+    batch_images_np = np.array(batch_images)
+    batch_images_np /= 255
+
+    return batch_images_np, utils.to_categorical(np.array(classification), num_classes)
 
 
 def read_ref_data_labels(data_file):
