@@ -22,16 +22,16 @@ def main():
     print("Secondary model built")
 
     # manually train on batches
-    ref_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
-    ref_train_label_file = "/Users/harpreetsingh/Downloads/ILSVRC2012_validation_ground_truth.txt"
-    target_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
+    ref_train_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/imagenet_validation"
+    ref_train_label_file = "/home/im-zbox2/harpreet/github/anomaly_data/ILSVRC2012_validation_ground_truth.txt"
+    target_train_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite"
 
     tot_loss, ref_loss = train(ref_model, secondary_model, 64, 4,
                                ref_train_data_dir, ref_train_label_file, target_train_data_dir)
     print("Training completed")
 
     # save secondary model after training
-    save_model_file = "path/to/results/trained_model.h5"
+    save_model_file = "/home/im-zbox2/harpreet/github/anomaly-svm-study/deep_one_class_features/results/trained_model.h5"
     secondary_model.save(save_model_file)
     print(f"Model saved to file: {save_model_file}")
 
@@ -78,6 +78,7 @@ def read_image_batch(image_list, batch_size, class_labels=None):
     classification = []
     for k in range(batch_size):
         rand_loc = random.randrange(0, len(image_list))
+        # print(f"opening image: {image_list[rand_loc]}")
         cv_image = read_image(image_list[rand_loc], (224, 224))
 
         batch_images.append(cv_image)
@@ -85,6 +86,7 @@ def read_image_batch(image_list, batch_size, class_labels=None):
         if not class_labels:
             classification.append(4095)
         else:
+            # print(f"image: {image_list[rand_loc]}, label: {class_labels[rand_loc]}")
             classification.append(class_labels[rand_loc])
 
     return np.array(batch_images), utils.to_categorical(np.array(classification))
@@ -102,8 +104,9 @@ def read_ref_data_labels(data_file):
 def get_images_list(list_dir):
     images_list = []
     for root, sub_dirs, files in os.walk(list_dir):
-        images_list += [os.path.join(root, file) for file in files if file.endswith(".jpg")]
+        images_list += [os.path.join(root, file) for file in files if file.endswith((".jpg", ".JPEG"))]
 
+    images_list.sort()
     return images_list
 
 
