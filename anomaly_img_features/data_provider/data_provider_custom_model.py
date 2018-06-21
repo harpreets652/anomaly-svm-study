@@ -1,6 +1,6 @@
 import os
-from tensorflow.contrib.keras import applications
-import tensorflow.contrib.keras as keras
+from keras import applications
+import keras
 import numpy as np
 
 import anomaly_img_features.data_provider.abstract_data_provider as abstract_provider
