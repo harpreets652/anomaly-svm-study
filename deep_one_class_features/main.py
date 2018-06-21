@@ -14,22 +14,26 @@ def main():
     # construct reference model
     ref_model = applications.VGG16()
     ref_model.compile(optimizer='sgd', loss='categorical_crossentropy')
+    print("Reference model built")
 
     # construct secondary model with shared layers
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
     secondary_model.compile(optimizer='Nadam', loss=my_loss.doc_total_loss)
+    print("Secondary model built")
 
     # manually train on batches
     ref_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
     ref_train_label_file = "/Users/harpreetsingh/Downloads/ILSVRC2012_validation_ground_truth.txt"
     target_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
 
-    tot_loss, ref_loss = train(ref_model, secondary_model, 5, 2,
+    tot_loss, ref_loss = train(ref_model, secondary_model, 64, 4,
                                ref_train_data_dir, ref_train_label_file, target_train_data_dir)
+    print("Training completed")
 
     # save secondary model after training
-    my_file_name = "path/to/results/trained_model.h5"
-    secondary_model.save(my_file_name)
+    save_model_file = "path/to/results/trained_model.h5"
+    secondary_model.save(save_model_file)
+    print(f"Model saved to file: {save_model_file}")
 
     visualize_data(tot_loss, "total loss history")
     visualize_data(ref_loss, "ref loss history")
@@ -46,8 +50,8 @@ def visualize_data(data, title):
 
 def train(ref_model, secondary_model, batch_size, num_epochs,
           ref_train_data_dir, ref_train_label_file, target_train_data_dir):
-    ref_images_list = get_images_list(ref_train_data_dir)
     ref_data_labels = read_ref_data_labels(ref_train_label_file)
+    ref_images_list = get_images_list(ref_train_data_dir)
     target_images_list = get_images_list(target_train_data_dir)
 
     num_iterations = max(len(target_images_list) / batch_size, 1) * num_epochs
@@ -64,6 +68,8 @@ def train(ref_model, secondary_model, batch_size, num_epochs,
         loss = secondary_model.train_on_batch(target_batch_x, target_batch_y)
         total_loss_history.append((i, loss))
 
+        print(f"Iteration {i}, total loss: {loss}, discriminative loss: {my_loss.discriminative_loss}")
+
     return np.array(total_loss_history), np.array(ref_loss_history)
 
 
@@ -79,7 +85,6 @@ def read_image_batch(image_list, batch_size, class_labels=None):
         if not class_labels:
             classification.append(4095)
         else:
-            # todo: verify the labels correspond to the correct image
             classification.append(class_labels[rand_loc])
 
     return np.array(batch_images), utils.to_categorical(np.array(classification))
