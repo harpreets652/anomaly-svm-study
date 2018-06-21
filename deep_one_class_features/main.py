@@ -12,6 +12,7 @@ import deep_one_class_features.custom_loss as my_loss
 
 def main():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+    os.environ["CUDA_VISIBLE_DEVICES"]="-1" 
 
     # construct reference model
     ref_model = applications.VGG16()
