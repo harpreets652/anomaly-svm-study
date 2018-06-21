@@ -95,7 +95,8 @@ def read_image_batch(image_list, batch_size, class_labels=None):
             classification.append(class_labels[rand_loc])
 
     batch_images_np = np.array(batch_images)
-    batch_images_np /= 255
+    batch_images_np.astype("float32")
+    batch_images_np /= 255.0
 
     return batch_images_np, utils.to_categorical(np.array(classification), num_classes)
 
