@@ -1,7 +1,7 @@
 from keras import backend as k
 import tensorflow as tf
 
-discriminative_loss = 1.0
+discriminative_loss = 0.0
 lambda_coefficient = 0.1
 
 
@@ -14,6 +14,6 @@ def doc_total_loss(y_true, y_pred):
     compactness_loss = tf.cast((tf.shape(y_pred)[0] / (tf.shape(y_pred)[1] * k.pow(tf.shape(y_pred)[0] - 1, 2))),
                                tf.float32) * var_sum
 
-    # total_loss = discriminative_loss + (lambda_coefficient * compactness_loss)
+    total_loss = discriminative_loss + (lambda_coefficient * compactness_loss)
 
     return compactness_loss
