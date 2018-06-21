@@ -9,6 +9,7 @@ import anomaly_img_features.data_provider.data_provider_resnet50 as resnet_provi
 import anomaly_img_features.data_provider.data_provider_inceptv3 as inception
 import anomaly_img_features.data_provider.data_provider_pca_wrapper as pca_wrapper
 # import anomaly_img_features.data_provider.data_provider_alex_net as alex_net
+import anomaly_img_features.data_provider.data_provider_custom_model as custom_provider
 import anomaly_img_features.anomaly_classifier as anomaly_classifier
 
 
@@ -57,6 +58,10 @@ def main():
     #                                                num_clusters=200,
     #                                                resize_image=(400, 225),
     #                                                patch_size=16)
+
+    # model_file_path = "bla/bla/bla.h5"
+    # data_provider = custom_provider.DataProviderCustomModel(training_data_dir, model_file_path)
+
     data_provider = inception.DataProviderInception(training_data_dir)
     print(f"Using {type(data_provider)}")
 
