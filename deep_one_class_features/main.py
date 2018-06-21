@@ -57,6 +57,7 @@ def train(ref_model, secondary_model, batch_size, num_epochs,
     target_images_list = get_images_list(target_train_data_dir)
 
     num_iterations = max(len(target_images_list) / batch_size, 1) * num_epochs
+    print(f"Total number of iterations: {int(num_iterations)}")
 
     total_loss_history = []
     ref_loss_history = []
