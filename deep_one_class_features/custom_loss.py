@@ -16,4 +16,4 @@ def doc_total_loss(y_true, y_pred):
 
     total_loss = discriminative_loss + (lambda_coefficient * compactness_loss)
 
-    return compactness_loss
+    return total_loss
