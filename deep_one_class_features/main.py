@@ -76,6 +76,8 @@ def train(ref_model, secondary_model, batch_size, num_epochs,
 def read_image_batch(image_list, batch_size, class_labels=None):
     batch_images = []
     classification = []
+    num_classes = 4096 if not class_labels else 1000
+
     for k in range(batch_size):
         rand_loc = random.randrange(0, len(image_list))
         # print(f"opening image: {image_list[rand_loc]}")
@@ -84,12 +86,12 @@ def read_image_batch(image_list, batch_size, class_labels=None):
         batch_images.append(cv_image)
 
         if not class_labels:
-            classification.append(4095)
+            classification.append(0)
         else:
             # print(f"image: {image_list[rand_loc]}, label: {class_labels[rand_loc]}")
             classification.append(class_labels[rand_loc])
 
-    return np.array(batch_images), utils.to_categorical(np.array(classification))
+    return np.array(batch_images), utils.to_categorical(np.array(classification), num_classes)
 
 
 def read_ref_data_labels(data_file):
