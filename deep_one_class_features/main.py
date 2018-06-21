@@ -21,8 +21,11 @@ def main():
 
     # manually train on batches
     ref_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
+    ref_train_label_file = "/Users/harpreetsingh/Downloads/ILSVRC2012_validation_ground_truth.txt"
     target_train_data_dir = "/Users/harpreetsingh/Downloads/airfield/pos_small"
-    tot_loss, ref_loss = train(ref_model, secondary_model, 5, 2, ref_train_data_dir, target_train_data_dir)
+
+    tot_loss, ref_loss = train(ref_model, secondary_model, 5, 2,
+                               ref_train_data_dir, ref_train_label_file, target_train_data_dir)
 
     # save secondary model after training
     my_file_name = "path/to/results/trained_model.h5"
@@ -41,8 +44,10 @@ def visualize_data(data, title):
     return
 
 
-def train(ref_model, secondary_model, batch_size, num_epochs, ref_train_data_dir, target_train_data_dir):
+def train(ref_model, secondary_model, batch_size, num_epochs,
+          ref_train_data_dir, ref_train_label_file, target_train_data_dir):
     ref_images_list = get_images_list(ref_train_data_dir)
+    ref_data_labels = read_ref_data_labels(ref_train_label_file)
     target_images_list = get_images_list(target_train_data_dir)
 
     num_iterations = max(len(target_images_list) / batch_size, 1) * num_epochs
@@ -50,8 +55,7 @@ def train(ref_model, secondary_model, batch_size, num_epochs, ref_train_data_dir
     total_loss_history = []
     ref_loss_history = []
     for i in range(int(num_iterations)):
-        # todo: fix loading labels for ref data set
-        ref_batch_x, ref_batch_y = read_image_batch(ref_images_list, batch_size, class_label=999)
+        ref_batch_x, ref_batch_y = read_image_batch(ref_images_list, batch_size, ref_data_labels)
         target_batch_x, target_batch_y = read_image_batch(ref_images_list, batch_size)
 
         my_loss.discriminative_loss = ref_model.test_on_batch(ref_batch_x, ref_batch_y)
@@ -63,7 +67,7 @@ def train(ref_model, secondary_model, batch_size, num_epochs, ref_train_data_dir
     return np.array(total_loss_history), np.array(ref_loss_history)
 
 
-def read_image_batch(image_list, batch_size, placeholder_classification=True, class_label=4095):
+def read_image_batch(image_list, batch_size, class_labels=None):
     batch_images = []
     classification = []
     for k in range(batch_size):
@@ -72,10 +76,22 @@ def read_image_batch(image_list, batch_size, placeholder_classification=True, cl
 
         batch_images.append(cv_image)
 
-        if placeholder_classification:
-            classification.append(class_label)
+        if not class_labels:
+            classification.append(4095)
+        else:
+            # todo: verify the labels correspond to the correct image
+            classification.append(class_labels[rand_loc])
 
     return np.array(batch_images), utils.to_categorical(np.array(classification))
+
+
+def read_ref_data_labels(data_file):
+    labels = []
+    with open(data_file, 'r') as label_file:
+        lines = label_file.readlines()
+        labels = [int(line) for line in lines]
+
+    return labels
 
 
 def get_images_list(list_dir):
