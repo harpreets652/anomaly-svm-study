@@ -43,7 +43,13 @@ class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
+        self._mean, self._std_dev = DataProviderCustomModel.compute_normalization_params(self._X)
+        self._X = DataProviderCustomModel.normalize(self._X, self._mean, self._std_dev)
+
         return
+
+    def get_training_data(self):
+        return self._X
 
     def get_image_descriptor(self, image_path):
         """
@@ -58,7 +64,6 @@ class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
         cv_image = cv_image.astype("float32")
         cv_image = applications.vgg16.preprocess_input(cv_image)
 
-        return self._model.predict(cv_image)
+        x = self._model.predict(cv_image)
 
-    def get_training_data(self):
-        return self._X
+        return DataProviderCustomModel.normalize(x, self._mean, self._std_dev)
