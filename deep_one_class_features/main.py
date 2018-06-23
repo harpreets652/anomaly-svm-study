@@ -21,16 +21,18 @@ def main():
 
     # construct secondary model with shared layers
     secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
-    secondary_model.compile(optimizer='sgd', loss=my_loss.doc_total_loss)
+    secondary_model.compile(optimizer='rmsprop', loss=my_loss.doc_total_loss)
     print("Secondary model built")
 
     # manually train on batches
-    ref_train_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/imagenet_validation"
-    ref_train_label_file = "/home/im-zbox2/harpreet/github/anomaly_data/ILSVRC2012_validation_ground_truth.txt"
-    target_train_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite"
+    ref_training_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/imagenet_validation"
+    ref_training_data_label_file = "/home/im-zbox2/harpreet/github/anomaly_data/ILSVRC2012_validation_ground_truth.txt"
 
-    tot_loss, ref_loss = train(ref_model, secondary_model, 64, 2,
-                               ref_train_data_dir, ref_train_label_file, target_train_data_dir)
+    target_training_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite"
+
+    total_loss_history, discriminative_loss_history = train(ref_model, secondary_model, 64, 2,
+                                                            ref_training_data_dir, ref_training_data_label_file,
+                                                            target_training_data_dir)
     print("Training completed")
 
     # save secondary model after training
@@ -38,13 +40,19 @@ def main():
     secondary_model.save(save_model_file)
     print(f"Model saved to file: {save_model_file}")
 
-    visualize_data(tot_loss, "total loss history")
-    visualize_data(ref_loss, "ref loss history")
+    visualize_data(total_loss_history, "total loss history")
+    visualize_data(discriminative_loss_history, "discriminative loss history")
 
     return
 
 
 def visualize_data(data, title):
+    """
+    Visualize 2D metrics
+
+    :param data: 2D np array data
+    :param title: Title of the graph
+    """
     plt.scatter(data[:, 0], data[:, 1], c='blueviolet', s=40, edgecolors='k')
     plt.title(title)
     plt.show()
@@ -53,6 +61,18 @@ def visualize_data(data, title):
 
 def train(ref_model, secondary_model, batch_size, num_epochs,
           ref_train_data_dir, ref_train_label_file, target_train_data_dir):
+    """
+    Manually trains a DOC model
+
+    :param ref_model: Reference model used to maintain discriminative featues
+    :param secondary_model: Model used to train on compactness of intra-class features
+    :param batch_size: batch size for training
+    :param num_epochs: number of epoch to train
+    :param ref_train_data_dir: path to ImageNet training data
+    :param ref_train_label_file: path to ImageNet training data labels
+    :param target_train_data_dir: path to target data
+    :return: discriminative loss history and total loss history
+    """
     ref_data_labels = read_ref_data_labels(ref_train_label_file)
     ref_images_list = get_images_list(ref_train_data_dir)
     target_images_list = get_images_list(target_train_data_dir)
@@ -61,23 +81,34 @@ def train(ref_model, secondary_model, batch_size, num_epochs,
     print(f"Total number of iterations: {int(num_iterations)}")
 
     total_loss_history = []
-    ref_loss_history = []
+    disc_loss_history = []
     for i in range(int(num_iterations)):
         ref_batch_x, ref_batch_y = read_image_batch(ref_images_list, batch_size, ref_data_labels)
         target_batch_x, target_batch_y = read_image_batch(ref_images_list, batch_size)
 
-        my_loss.discriminative_loss = ref_model.test_on_batch(ref_batch_x, ref_batch_y)
-        ref_loss_history.append((i, my_loss.discriminative_loss))
+        discriminative_loss = ref_model.test_on_batch(ref_batch_x, ref_batch_y)
+        disc_loss_history.append((i, discriminative_loss))
 
-        loss = secondary_model.train_on_batch(target_batch_x, target_batch_y)
-        total_loss_history.append((i, loss))
+        # pass discriminative loss through the placeholder target batch output
+        target_batch_y[0][0] = discriminative_loss
 
-        print(f"Iteration {i}, total loss: {loss}, discriminative loss: {my_loss.discriminative_loss}")
+        total_loss = secondary_model.train_on_batch(target_batch_x, target_batch_y)
+        total_loss_history.append((i, total_loss))
 
-    return np.array(total_loss_history), np.array(ref_loss_history)
+        print(f"Iteration {i}, total loss: {total_loss}, discriminative loss: {discriminative_loss}")
+
+    return np.array(total_loss_history), np.array(disc_loss_history)
 
 
 def read_image_batch(image_list, batch_size, class_labels=None):
+    """
+    Read a batch of images
+
+    :param image_list: list of image file names
+    :param batch_size: size of batch
+    :param class_labels: output labels
+    :return: ndarray of images and categorical labels
+    """
     batch_images = []
     classification = []
     num_classes = 4096 if not class_labels else 1000
@@ -103,6 +134,12 @@ def read_image_batch(image_list, batch_size, class_labels=None):
 
 
 def read_ref_data_labels(data_file):
+    """
+    Read ImageNet training data labels
+
+    :param data_file:
+    :return:
+    """
     labels = []
     with open(data_file, 'r') as label_file:
         lines = label_file.readlines()
@@ -113,6 +150,12 @@ def read_ref_data_labels(data_file):
 
 
 def get_images_list(list_dir):
+    """
+    Read all images in a directory
+
+    :param list_dir: path to the root directory
+    :return: list of sorted image names
+    """
     images_list = []
     for root, sub_dirs, files in os.walk(list_dir):
         images_list += [os.path.join(root, file) for file in files if file.endswith((".jpg", ".JPEG"))]
@@ -136,6 +179,7 @@ def read_image(image_file, resize_image=()):
         raise RuntimeError(f"Unable to open {image_file}")
 
     if len(resize_image) > 0:
+        # todo: to increase size - https://stackoverflow.com/questions/19342543/enlarge-image-pixels-with-opencv
         cv_image = cv2.resize(cv_image, resize_image)
 
     return cv_image
