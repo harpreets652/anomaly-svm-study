@@ -1,21 +1,22 @@
-Features: Custom VGG16
+Features: VGG16 DOC
 Nu: 0.1
 Kernel: RBF
 Gamma: 0.1
 Data: new desert site: 21273 training images
+Note: SVM finished very fast!!
 
-Using <class 'anomaly_img_features.data_provider.data_provider_custom_model.DataProviderCustomModel'>
-....................*...................*
-optimization finished, #iter = 39011
-obj = 130.109415, rho = 0.122322
-nSV = 17694, nBSV = 0
+*
+optimization finished, #iter = 0
+obj = 2262702.644998, rho = 2127.300000
+nSV = 2128, nBSV = 2127
 [LibSVM]
+
 number of support vectors:
- (17694, 4096)
+ (2128, 4096)
 
 testing /home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite/0
 Results:
-[3967. 1033.]
+[5000.    0.]
  total number of image: 5000
 
 testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/neg/0
@@ -25,5 +26,5 @@ Results:
 
 testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/pos/0
 Results:
-[4563.  437.]
+[5000.    0.]
  total number of image: 5000
