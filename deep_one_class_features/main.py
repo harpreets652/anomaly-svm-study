@@ -12,6 +12,8 @@ import deep_one_class_features.custom_loss as my_loss
 BATCH_SIZE = 25
 NUM_EPOCHS = 2
 MODEL_IMAGE_SIZE = (224, 224)
+IMAGE_INTERPOLATION = cv2.INTER_LINEAR
+NUM_DEEP_FEATURES = 4096
 
 
 def main():
@@ -115,7 +117,7 @@ def read_image_batch(image_list, batch_size, class_labels=None):
     """
     batch_images = []
     classification = []
-    num_classes = 4096 if not class_labels else 1000
+    num_classes = NUM_DEEP_FEATURES if not class_labels else 1000
 
     for k in range(batch_size):
         rand_loc = random.randrange(0, len(image_list))
@@ -183,7 +185,7 @@ def read_image(image_file, resize_image=()):
         raise RuntimeError(f"Unable to open {image_file}")
 
     if len(resize_image) > 0:
-        cv_image = cv2.resize(cv_image, resize_image, interpolation=cv2.INTER_LINEAR)
+        cv_image = cv2.resize(cv_image, resize_image, interpolation=IMAGE_INTERPOLATION)
 
     return cv_image
 
