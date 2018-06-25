@@ -1,4 +1,4 @@
-Using SGD, 64 batch size, 2 epochs, with images normalized
+Using SGD, 64 batch size, 2 epochs, with images normalized and only optimizing compactness loss
 Trained only on compactness loss
 
 

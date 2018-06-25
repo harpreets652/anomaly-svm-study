@@ -1,4 +1,5 @@
-Using SGD, 64 batch size, 2 epochs, without normalization
+Using SGD, 64 batch size, 2 epochs, without normalization and only optimizing compactness loss
+
 
 Reference model built
 Secondary model built
