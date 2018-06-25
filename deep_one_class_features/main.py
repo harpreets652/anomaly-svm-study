@@ -9,6 +9,10 @@ import matplotlib.pyplot as plt
 
 import deep_one_class_features.custom_loss as my_loss
 
+BATCH_SIZE = 25
+NUM_EPOCHS = 2
+MODEL_IMAGE_SIZE = (224, 224)
+
 
 def main():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
@@ -30,7 +34,7 @@ def main():
 
     target_training_data_dir = "/home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite"
 
-    total_loss_history, discriminative_loss_history = train(ref_model, secondary_model, 64, 2,
+    total_loss_history, discriminative_loss_history = train(ref_model, secondary_model, BATCH_SIZE, NUM_EPOCHS,
                                                             ref_training_data_dir, ref_training_data_label_file,
                                                             target_training_data_dir)
     print("Training completed")
@@ -53,7 +57,7 @@ def visualize_data(data, title):
     :param data: 2D np array data
     :param title: Title of the graph
     """
-    plt.scatter(data[:, 0], data[:, 1], c='blueviolet', s=40, edgecolors='k')
+    plt.scatter(data[:, 0], data[:, 1], c='blueviolet', s=30, edgecolors='k')
     plt.title(title)
     plt.show()
     return
@@ -116,7 +120,7 @@ def read_image_batch(image_list, batch_size, class_labels=None):
     for k in range(batch_size):
         rand_loc = random.randrange(0, len(image_list))
         # print(f"opening image: {image_list[rand_loc]}")
-        cv_image = read_image(image_list[rand_loc], (224, 224))
+        cv_image = read_image(image_list[rand_loc], MODEL_IMAGE_SIZE)
 
         batch_images.append(cv_image)
 
@@ -179,8 +183,7 @@ def read_image(image_file, resize_image=()):
         raise RuntimeError(f"Unable to open {image_file}")
 
     if len(resize_image) > 0:
-        # todo: to increase size - https://stackoverflow.com/questions/19342543/enlarge-image-pixels-with-opencv
-        cv_image = cv2.resize(cv_image, resize_image)
+        cv_image = cv2.resize(cv_image, resize_image, interpolation=cv2.INTER_LINEAR)
 
     return cv_image
 
