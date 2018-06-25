@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 
 import deep_one_class_features.custom_loss as my_loss
 
-BATCH_SIZE = 25
+BATCH_SIZE = 64
 NUM_EPOCHS = 2
-MODEL_IMAGE_SIZE = (224, 224)
+MODEL_IMAGE_SIZE = (299, 299)
 IMAGE_INTERPOLATION = cv2.INTER_LINEAR
-NUM_DEEP_FEATURES = 4096
+NUM_DEEP_FEATURES = 2048
 
 
 def main():
@@ -21,12 +21,12 @@ def main():
     # os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 
     # construct reference model
-    ref_model = applications.VGG16()
+    ref_model = applications.InceptionV3()
     ref_model.compile(optimizer='sgd', loss='categorical_crossentropy')
     print("Reference model built")
 
     # construct secondary model with shared layers
-    secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer("fc1").output)
+    secondary_model = Model(inputs=ref_model.inputs, outputs=ref_model.get_layer('avg_pool').output)
     secondary_model.compile(optimizer='rmsprop', loss=my_loss.doc_total_loss)
     print("Secondary model built")
 
@@ -42,7 +42,7 @@ def main():
     print("Training completed")
 
     # save secondary model after training
-    save_model_file = "/home/im-zbox2/harpreet/github/anomaly-svm-study/deep_one_class_features/results/trained_model.h5"
+    save_model_file = "/home/im-zbox2/harpreet/github/anomaly-svm-study/deep_one_class_features/results/trained_model.b.h5"
     secondary_model.save(save_model_file)
     print(f"Model saved to file: {save_model_file}")
 

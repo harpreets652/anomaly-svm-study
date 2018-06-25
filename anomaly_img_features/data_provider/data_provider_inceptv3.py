@@ -13,7 +13,7 @@ class DataProviderInception(abstract_provider.AbstractDataProvider):
 
         :param training_images_dir: (string) directory containing training data
         """
-        self._model = applications.inception_v3.InceptionV3(include_top=False,
+        self._model = applications.InceptionV3(include_top=False,
                                                             pooling="avg",
                                                             input_shape=(299, 299, 3))
 

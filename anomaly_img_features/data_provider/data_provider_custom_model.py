@@ -8,6 +8,8 @@ import deep_one_class_features.custom_loss as custom_loss
 
 
 class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
+    MODEL_IMAGE_SHAPE = (229, 229)
+
     def __init__(self, training_images_dir, model_file_path):
         """
         This data provider utilizes a custom model loaded from an .h5 file
@@ -31,10 +33,12 @@ class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
                     print(f"{training_counter} images completed")
 
                 image_file_path = os.path.join(root, image_file)
-                cv_image = DataProviderCustomModel.read_image(image_file_path, (224, 224))
+                cv_image = DataProviderCustomModel.read_image(image_file_path,
+                                                              DataProviderCustomModel.MODEL_IMAGE_SHAPE)
+
                 cv_image = np.expand_dims(cv_image, axis=0)
                 cv_image = cv_image.astype("float32")
-                cv_image = applications.vgg16.preprocess_input(cv_image)
+                cv_image = applications.inception_v3.preprocess_input(cv_image)
 
                 features = self._model.predict(cv_image)
                 training_x_list.append(features)
@@ -43,8 +47,8 @@ class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
 
         self._X = np.vstack(training_x_list)
 
-        self._mean, self._std_dev = DataProviderCustomModel.compute_normalization_params(self._X)
-        self._X = DataProviderCustomModel.normalize(self._X, self._mean, self._std_dev)
+        # self._mean, self._std_dev = DataProviderCustomModel.compute_normalization_params(self._X)
+        # self._X = DataProviderCustomModel.normalize(self._X, self._mean, self._std_dev)
 
         return
 
@@ -59,11 +63,11 @@ class DataProviderCustomModel(abstract_provider.AbstractDataProvider):
         :return: (ndarray) numpy array
         """
 
-        cv_image = DataProviderCustomModel.read_image(image_path, (224, 224))
+        cv_image = DataProviderCustomModel.read_image(image_path, DataProviderCustomModel.MODEL_IMAGE_SHAPE)
         cv_image = np.expand_dims(cv_image, axis=0)
         cv_image = cv_image.astype("float32")
-        cv_image = applications.vgg16.preprocess_input(cv_image)
+        cv_image = applications.inception_v3.preprocess_input(cv_image)
 
         x = self._model.predict(cv_image)
 
-        return DataProviderCustomModel.normalize(x, self._mean, self._std_dev)
+        return x
