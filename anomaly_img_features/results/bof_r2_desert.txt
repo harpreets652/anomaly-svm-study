@@ -1,0 +1,28 @@
+Features: Bag of Features, SURF
+Nu: 0.1
+Kernel: RBF
+Gamma: 0.5
+Data: new desert site: 21273 training images
+
+optimization finished, #iter = 1978
+obj = 2250417.964973, rho = 2115.859959
+nSV = 2163, nBSV = 2094
+[LibSVM]
+
+number of support vectors:
+ (2163, 2048)
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/train/pos_newsite/0
+Results:
+[ 441. 4559.]
+ total number of image: 5000
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/neg/0
+Results:
+[ 367. 2778.]
+ total number of image: 3145
+
+testing /home/im-zbox2/harpreet/github/anomaly_data/test/newsite/pos/0
+Results:
+[ 518. 4482.]
+ total number of image: 5000
