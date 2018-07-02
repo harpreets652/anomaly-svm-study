@@ -1,0 +1,28 @@
+Features: VGG
+Nu: 0.1
+kernel: RBF
+Gamma: 0.1
+Data: first desert site: 1220 training set
+
+optimization finished, #iter = 3294
+obj = 6.100140, rho = 0.100000
+nSV = 1220, nBSV = 0
+[LibSVM]
+
+number of support vectors:
+ (1220, 4096)
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_big
+Results:
+[732. 488.]
+ total number of image: 1220
+
+testing /Users/harpreetsingh/Downloads/airfield/neg
+Results:
+[163.   0.]
+ total number of image: 163
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_val
+Results:
+[168.  99.]
+ total number of image: 267

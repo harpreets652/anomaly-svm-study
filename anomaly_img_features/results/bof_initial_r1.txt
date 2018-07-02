@@ -1,0 +1,28 @@
+Features: Bag of Features, SURF
+Nu: 0.1
+Kernel: RBF
+Gamma: 0.1
+Data: first desert site: 1220 training set
+
+ooptimization finished, #iter = 105
+obj = 7437.518273, rho = 121.926958
+nSV = 127, nBSV = 117
+[LibSVM]
+
+number of support vectors:
+ (127, 2048)
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_big
+Results:
+[ 200. 1020.]
+ total number of image: 1220
+
+testing /Users/harpreetsingh/Downloads/airfield/neg
+Results:
+[85. 78.]
+ total number of image: 163
+
+testing /Users/harpreetsingh/Downloads/airfield/pos_val
+Results:
+[ 35. 232.]
+ total number of image: 267
